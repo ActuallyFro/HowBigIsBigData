@@ -54,7 +54,7 @@ elif [ "$1" == "generate" ]; then
     echo "[TEST] All $count floats are unique!"
   else
     echo "[TEST] $count floats are NOT unique! (expected: $2)"
-    diffCount=$($2 - $count)
+    diffCount=$(($2 - $count))
     echo "[WARN] Removing '$diffCount' total duplicates..."
 
     head -n 1 "../"$outputFile > tempHead.csv
