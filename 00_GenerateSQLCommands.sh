@@ -66,7 +66,7 @@ function createDatabase() {
 
 function createTableLongtext() {
   dbname="db_"$1
-  tableName="tbl_"$1
+  tableName="tbl_"$1"_longtext"
   file="$2"
 
   echo "USE $dbname;" >> $file
@@ -100,6 +100,13 @@ function createTableFloat() {
 function insertIntoTableFloat() {
   tableName="tbl_"$1
   file="$2"
+  insertFile="$3"
+
+  if [ ! -f "$insertFile" ]; then
+    echo "1"
+    return
+  fi
+
   #echo "INSERT INTO $tableName (id, name) VALUES (1, 'John');" >> $file
 
   #https://www.mysqltutorial.org/mysql-uuid/
@@ -108,6 +115,29 @@ function insertIntoTableFloat() {
   #       (UUID_TO_BIN(UUID()),'Will Smith'),
   #       (UUID_TO_BIN(UUID()),'Mary Jane');
 
+
+  echo "0"
+}
+
+function insertIntoTableLongtext() {
+  tableName="tbl_"$1"_longtext"
+  file="$2"
+  insertFile="$3"
+
+  if [ ! -f "$insertFile" ]; then
+    echo "1"
+    return
+  fi
+
+  #echo "INSERT INTO $tableName (id, name) VALUES (1, 'John');" >> $file
+
+  #https://www.mysqltutorial.org/mysql-uuid/
+  # INSERT INTO customers(id, name)
+  # VALUES(UUID_TO_BIN(UUID()),'John Doe'),
+  #       (UUID_TO_BIN(UUID()),'Will Smith'),
+  #       (UUID_TO_BIN(UUID()),'Mary Jane');
+
+  echo "0"
 }
 
 if [ $# -ne 1 ]; then
@@ -140,18 +170,30 @@ if [ "$1" == "create" ] || [ "$1" == "create-longtext" ]; then
 
 elif [ "$1" == "insert" ] || [ "$1" == "insert-longtext" ]; then
   file="InsertTables.sql"
-  recreateFile $file
-  echo "Creating new script ($file)..."
+  generatedFloatsFile="generateRandFloat.md"
 
+  recreateFile $file
+  
   mode="Float"
+  retVal=0
   if [ "$1" == "insert" ]; then
-    insertIntoTableFloat "test" "$file"
+    retVal=`insertIntoTableFloat "test" "$file" "$generatedFloatsFile"`
   else
-    #insertIntoTableLongtext "test" "$file"
+    retVal=`insertIntoTableLongtext "test" "$file" "$generatedFloatsFile"`
     mode="Longtext"
   fi
-  echo "Removed old file (if present), compiled create script with ($mode) settings..."
-  # open float
+
+  # echo "[DEBUG] Return value: $retVal"
+
+  if [ "$retVal" -eq 0 ]; then
+    echo "Removed old file (if present), compiled insert script with ($mode) settings..."
+  else
+    if [ "$retVal" -eq 1 ]; then
+      echo "[ERROR] File '$generatedFloatsFile' does not exist!"
+    else 
+      echo "Error: Failed to generate insert script..."
+    fi
+  fi
 
 fi
 
