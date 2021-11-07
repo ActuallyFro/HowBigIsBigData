@@ -27,7 +27,7 @@
 #include <string>
 // #include <numeric>
 
-#https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
+// https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
 std::string getTimeStr(){
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
