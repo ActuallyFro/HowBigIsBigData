@@ -27,6 +27,10 @@ elif [ "$1" == "count" ] || [ "$1" == "list" ]; then
   dbname="db_"$nameTest
   tableName="tbl_"$nameTest
 
+  cmd_to_send=""
+  cmd_use="USE $dbname;"
+  cmd_add=""
+
   if [ "$1" == "list" ]; then
     cmd_add="SELECT * FROM $tableName;"
   elif [ "$1" == "count" ]; then
