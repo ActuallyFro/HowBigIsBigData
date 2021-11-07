@@ -232,6 +232,7 @@ elif [ "$1" == "insert" ] || [ "$1" == "insert-longtext" ]; then
   else
     if [ "$retVal" -eq 1 ]; then
       echo "[ERROR] File '$generatedFloatsFile' does not exist!"
+      echo "[Reccomend] Go into '02_GenerateFloatsCPP' and generate the file!!!"
     else 
       echo "Error: Failed to generate insert script..."
     fi
