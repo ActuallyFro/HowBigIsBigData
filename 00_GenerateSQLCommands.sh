@@ -118,16 +118,21 @@ function insertIntoTableFloat() {
 
   # First go (UNTESTED):
   # echo "LOAD DATA INFILE '$insertFile' INTO TABLE $tableName IGNORE 2 LINES;" #>> $file #Date created, and how many lines...
-  echo "USE $dbname;" >> $file
-  echo "" >> $file
-  echo "LOAD DATA INFILE '$insertFile' " >> $file
-  echo "INTO TABLE $tableName " >> $file
-  echo "FIELDS TERMINATED BY ',' " >> $file
-  # echo "ENCLOSED BY '\"' " >> $file #currently they ARE NOT
-  echo "LINES TERMINATED BY '\n' " >> $file
-  echo "IGNORE 2 LINES " >> $file #https://stackoverflow.com/questions/1618355/load-data-local-how-do-i-skip-the-first-line 
-  echo "(@uuid,col2) " >> $file
-  echo "SET col1= UUID_TO_BIN(@uuid);" >> $file
+  
+  #Second:
+  # echo "USE $dbname; " >> $file
+  # echo "" >> $file
+  # echo "LOAD DATA INFILE '$insertFile' " >> $file
+  # echo "INTO TABLE $tableName " >> $file
+  # echo "FIELDS TERMINATED BY ',' " >> $file
+  # # echo "ENCLOSED BY '\"' " >> $file #currently they ARE NOT
+  # echo "LINES TERMINATED BY '\n' " >> $file
+  # echo "IGNORE 2 LINES " >> $file #https://stackoverflow.com/questions/1618355/load-data-local-how-do-i-skip-the-first-line 
+  # echo "(@uuid,col2) " >> $file
+  # echo "SET col1= UUID_TO_BIN(@uuid);" >> $file
+
+  #Single Line to use command VS. .sql/CAT
+  echo "USE $dbname; LOAD DATA INFILE '$insertFile' INTO TABLE $tableName FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES (@uuid,col2) SET col1= UUID_TO_BIN(@uuid);" >> $file
 
   echo "0"
 }

@@ -33,6 +33,7 @@ elif [ "$1" == "count" ] || [ "$1" == "list" ]; then
 
   if [ "$1" == "list" ]; then
     cmd_add="SELECT * FROM $tableName;"
+
   elif [ "$1" == "count" ]; then
     cmd_add="SELECT COUNT(*) FROM $tableName;"
   fi
@@ -65,15 +66,21 @@ fi
 
 # https://dba.stackexchange.com/questions/17367/how-can-i-monitor-the-progress-of-an-import-of-a-large-sql-file
 # pv file-name.sql | mysql -u root -pPass <DataBaseName>
-pv "$file" | mysql --defaults-file=my.cfg -h localhost
+# pv "$file" | mysql --defaults-file=my.cfg -h localhost
 #^---- likely DOES NOT work, because this is based on the INSERT vs. LOAD FILE concept
 
 # pv CreateTables.sql | mysql --defaults-file=my.cfg -h localhost "db_"$nameDB
 
 if [ "$1" == "create" ]; then
+  pv "$file" | mysql --defaults-file=my.cfg -h localhost
   echo "[RunCommands] Done creating!"
 
 else
+  cmd_to_send=`cat $file`
+
+  echo "[RunCommands] Sending Cmd: <$cmd_to_send>"
+
+  mysql --defaults-file=my.cfg -h localhost -e "$cmd_to_send"
   echo "[RunCommands] Done inserting!"
 
 fi
