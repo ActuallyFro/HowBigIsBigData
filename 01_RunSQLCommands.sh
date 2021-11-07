@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -z "$(which pv)" ]; then
+  echo "[ERROR] pv is not installed"
+  exit 1
+fi
+
 nameDB="test"
 
 # if [ ! -f ~/.my.cfg ]; then
