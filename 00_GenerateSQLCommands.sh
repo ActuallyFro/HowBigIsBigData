@@ -98,6 +98,7 @@ function createTableFloat() {
 
 
 function insertIntoTableFloat() {
+  dbname="db_"$1
   tableName="tbl_"$1
   file="$2"
   insertFile="$3"
@@ -115,8 +116,17 @@ function insertIntoTableFloat() {
     #       (UUID_TO_BIN(UUID()),'Will Smith'),
     #       (UUID_TO_BIN(UUID()),'Mary Jane');
 
-  echo "LOAD DATA INFILE '$insertFile' INTO TABLE $tableName IGNORE 2 LINES;" #>> $file #Date created, and how many lines...
-
+  # First go (UNTESTED):
+  # echo "LOAD DATA INFILE '$insertFile' INTO TABLE $tableName IGNORE 2 LINES;" #>> $file #Date created, and how many lines...
+  echo "USE $dbname;" >> $file
+  echo "" >> $file
+  echo "LOAD DATA INFILE '$insertFile' " >> $file
+  echo "INTO TABLE $tableName " >> $file
+  echo "FIELDS TERMINATED BY ',' " >> $file
+  # echo "ENCLOSED BY '\"' " >> $file #currently they ARE NOT
+  echo "LINES TERMINATED BY '\n' " >> $file
+  echo "(@uuid,col2) " >> $file
+  echo "SET col1= UUID_TO_BIN(@uuid);" >> $file
 
   echo "0"
 }
