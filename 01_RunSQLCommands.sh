@@ -1,8 +1,16 @@
 #!/bin/bash
 
+nameDB="test"
+
 # if [ ! -f ~/.my.cfg ]; then
 #   echo "[ERROR] ~/.my.cfg DOES NOT exist! Aborting..."
 #   exit 1
 # fi
 
-mysql --defaults-file=my.cfg -h localhost < CreateTables.sql
+# # WORKS
+# mysql --defaults-file=my.cfg -h localhost < CreateTables.sql
+
+# https://dba.stackexchange.com/questions/17367/how-can-i-monitor-the-progress-of-an-import-of-a-large-sql-file
+# pv file-name.sql | mysql -u root -pPass <DataBaseName>
+pv CreateTables.sql | mysql --defaults-file=my.cfg -h localhost
+# pv CreateTables.sql | mysql --defaults-file=my.cfg -h localhost "db_"$nameDB
