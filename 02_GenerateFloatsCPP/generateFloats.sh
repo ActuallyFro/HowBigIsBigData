@@ -69,7 +69,7 @@ elif [ "$1" == "generate" ]; then
     echo "[TEST] RE-Checking for Uniqueness..."
     #bash run a local script (CountUniqUUIDs.sh) save result in variable (count)
     countAgain=$(bash ./CountUniqUUIDs.sh)
-    deltaCount=$($2 - $diffCount)
+    deltaCount=$(($2 - $diffCount))
     if [ "$countAgain" == "$deltaCount" ]; then
       echo "[TEST] All $count floats are unique!"
     else
