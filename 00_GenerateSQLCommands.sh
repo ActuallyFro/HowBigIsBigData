@@ -107,13 +107,15 @@ function insertIntoTableFloat() {
     return
   fi
 
-  #echo "INSERT INTO $tableName (id, name) VALUES (1, 'John');" >> $file
+  # BAD: (but would likely work)
+    #echo "INSERT INTO $tableName (id, name) VALUES (1, 'John');" >> $file
+    #https://www.mysqltutorial.org/mysql-uuid/
+    # INSERT INTO customers(id, name)
+    # VALUES(UUID_TO_BIN(UUID()),'John Doe'),
+    #       (UUID_TO_BIN(UUID()),'Will Smith'),
+    #       (UUID_TO_BIN(UUID()),'Mary Jane');
 
-  #https://www.mysqltutorial.org/mysql-uuid/
-  # INSERT INTO customers(id, name)
-  # VALUES(UUID_TO_BIN(UUID()),'John Doe'),
-  #       (UUID_TO_BIN(UUID()),'Will Smith'),
-  #       (UUID_TO_BIN(UUID()),'Mary Jane');
+  echo "LOAD DATA INFILE '$insertFile' INTO TABLE $tableName IGNORE 2 LINES;" #>> $file #Date created, and how many lines...
 
 
   echo "0"
@@ -129,13 +131,16 @@ function insertIntoTableLongtext() {
     return
   fi
 
-  #echo "INSERT INTO $tableName (id, name) VALUES (1, 'John');" >> $file
+  # BAD: (but would likely work)
+    #echo "INSERT INTO $tableName (id, name) VALUES (1, 'John');" >> $file
 
-  #https://www.mysqltutorial.org/mysql-uuid/
-  # INSERT INTO customers(id, name)
-  # VALUES(UUID_TO_BIN(UUID()),'John Doe'),
-  #       (UUID_TO_BIN(UUID()),'Will Smith'),
-  #       (UUID_TO_BIN(UUID()),'Mary Jane');
+    #https://www.mysqltutorial.org/mysql-uuid/
+    # INSERT INTO customers(id, name)
+    # VALUES(UUID_TO_BIN(UUID()),'John Doe'),
+    #       (UUID_TO_BIN(UUID()),'Will Smith'),
+    #       (UUID_TO_BIN(UUID()),'Mary Jane');
+
+  echo "LOAD DATA INFILE '$insertFile' INTO TABLE $tableName IGNORE 2 LINES;" #>> $file #Date created, and how many lines...
 
   echo "0"
 }
@@ -170,7 +175,7 @@ if [ "$1" == "create" ] || [ "$1" == "create-longtext" ]; then
 
 elif [ "$1" == "insert" ] || [ "$1" == "insert-longtext" ]; then
   file="InsertTables.sql"
-  generatedFloatsFile="generateRandFloat.md"
+  generatedFloatsFile="generateRandFloat.csv"
 
   recreateFile $file
   
