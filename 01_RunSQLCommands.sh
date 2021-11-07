@@ -32,6 +32,16 @@ elif [ "$1" == "count" ]; then
   echo "[RunCommands] Connect is Fin!"
   exit 0
 
+elif [ "$1" == "list" ]; then
+  nameTest="test"
+  dbname="db_"$nameTest
+  tableName="tbl_"$nameTest
+  cmd_count="USE $dbname; SELECT * FROM $tableName;"
+
+  echo "$cmd_count" | mysql --defaults-file=my.cfg -h localhost
+  echo "[RunCommands] Connect is Fin!"
+  exit 0
+
 
 elif [ "$1" == "create" ]; then
   file="CreateTables.sql"
