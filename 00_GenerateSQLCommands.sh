@@ -10,6 +10,17 @@
 #     );" >> $file
 # }
 
+function recreateFile(){
+  file="$1"
+
+  if [ -f "$file" ]; then
+    rm -f $file
+  fi
+
+  touch $file
+  echo "Created new script ($file)..."
+}
+
 createRandFloat(){
   # Generate a random float between min and max 4 byte float
   # $1: min
@@ -39,17 +50,18 @@ createRandFloat(){
 # Create the database
 function createDatabase() {
   dbname="db_"$1
+  file="$2"
 
-  echo "-- AS ROOT:" >> $2
-  echo "-- --------" >> $2
-  echo "-- CREATE DATABASE $dbname;" >> $2
+  echo "-- AS ROOT:" >> $file
+  echo "-- --------" >> $file
+  echo "-- CREATE DATABASE $dbname;" >> $file
   #echo "-- CREATE DATABASE IF NOT EXISTS $dbname;" >> $file
-  echo "" >> $2
-  echo "-- USE $dbname;" >> $2
+  echo "" >> $file
+  echo "-- USE $dbname;" >> $file
 
-  echo "-- GRANT ALL PRIVILEGES ON $dbname.* TO '$3'@'localhost';" >> $2 #IDENTIFIED BY '$dbname';" >> $2
+  echo "-- GRANT ALL PRIVILEGES ON $dbname.* TO '$3'@'localhost';" >> $file #IDENTIFIED BY '$dbname';" >> $2
 
-  echo "" >> $2
+  echo "" >> $file
 }
 
 function createTableLongtext() {
@@ -57,15 +69,15 @@ function createTableLongtext() {
   tableName="tbl_"$1
   file="$2"
 
-  echo "USE $dbname;" >> $2
-  echo "" >> $2
+  echo "USE $dbname;" >> $file
+  echo "" >> $file
   #https://www.mysqltutorial.org/mysql-uuid/
   echo "CREATE TABLE IF NOT EXISTS $tableName (
       id BINARY(16) PRIMARY KEY,
-      name LONGTEXT(255)
-);" >> $2
+      name LONGTEXT NOT NULL
+);" >> $file
 
-  echo "" >> $2
+  echo "" >> $file
 }
 
 function createTableFloat() {
@@ -73,19 +85,19 @@ function createTableFloat() {
   tableName="tbl_"$1
   file="$2"
 
-  echo "USE $dbname;" >> $2
-  echo "" >> $2
+  echo "USE $dbname;" >> $file
+  echo "" >> $file
 
   echo "CREATE TABLE IF NOT EXISTS $tableName (
       id BINARY(16) PRIMARY KEY,
       value FLOAT(30,6)
-);" >> $2
+);" >> $file
 
-  echo "" >> $2
+  echo "" >> $file
 }
 
 
-function insertIntoTable() {
+function insertIntoTableFloat() {
   tableName="tbl_"$1
   file="$2"
   #echo "INSERT INTO $tableName (id, name) VALUES (1, 'John');" >> $file
@@ -100,15 +112,47 @@ function insertIntoTable() {
 
 if [ $# -ne 1 ]; then
   echo "Usage: $0 <action>"
-  echo "  action: create | insert"
+  echo "  action: create | create-longtext | insert | insert-longtext"
   exit 1
 fi
 
 user="bigdata"
-file="CreateTables.sql"
-rm -f $file
-touch $file
 
-# createRandFloat 
-createDatabase "test" "$file" "$user"
-createTableFloat "test" "$file"
+# commandline argument check if $1 is "build", then build the project
+if [ "$1" == "create" ] || [ "$1" == "create-longtext" ]; then
+  file="CreateTables.sql"
+  # echo "Creating new script ($file)..."
+
+  recreateFile $file
+
+  # createRandFloat 
+  createDatabase "test" "$file" "$user"
+
+  mode="Float"
+  if [ "$1" == "create" ]; then
+    createTableFloat "test" "$file"
+  else
+    createTableLongtext "test" "$file"
+    mode="Longtext"
+  fi
+  echo "Removed old file (if present), compiled create script with ($mode) settings..."
+
+
+elif [ "$1" == "insert" ] || [ "$1" == "insert-longtext" ]; then
+  file="InsertTables.sql"
+  recreateFile $file
+  echo "Creating new script ($file)..."
+
+  mode="Float"
+  if [ "$1" == "insert" ]; then
+    insertIntoTableFloat "test" "$file"
+  else
+    #insertIntoTableLongtext "test" "$file"
+    mode="Longtext"
+  fi
+  echo "Removed old file (if present), compiled create script with ($mode) settings..."
+  # open float
+
+fi
+
+echo "Done!"
