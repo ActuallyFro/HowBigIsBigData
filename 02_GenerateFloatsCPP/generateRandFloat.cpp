@@ -33,6 +33,10 @@ std::string getTimeStr(){
 
     std::string s(30, '\0');
     std::strftime(&s[0], s.size(), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+
+    // Force string Length to '19' (bc: 2021-11-07 10:16:53)
+    s.resize(19);
+
     return s;
 }
 
