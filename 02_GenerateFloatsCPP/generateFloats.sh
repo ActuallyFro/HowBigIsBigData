@@ -1,7 +1,7 @@
 #!/bin/bash
 generatorName="generateRandFloat"
 generatorSource="${generatorName}.cpp"
-outputFile="${generatorName}.md"
+outputFile="${generatorName}.csv"
 
 #if "--help"
 if [ "$1" == "--help" ] || [ "$1" == "" ]; then
