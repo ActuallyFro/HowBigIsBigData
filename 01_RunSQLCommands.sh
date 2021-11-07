@@ -18,7 +18,12 @@ file="InsertTables.sql" #Runs the .sql that LOADS generateRandFloat.csv
 
 #It's MORE likely to run insert more often than create
 # if [ "$1" == "insert" ]; then
-if [ "$1" == "create" ]; then
+if [ "$1" == "connect" ]; then
+  mysql --defaults-file=my.cfg -h localhost
+  echo "[RunCommands] Connect is Fin!"
+  exit 0
+
+elif [ "$1" == "create" ]; then
   file="CreateTables.sql"
 fi
 
@@ -36,3 +41,11 @@ pv "$file" | mysql --defaults-file=my.cfg -h localhost
 #^---- likely DOES NOT work, because this is based on the INSERT vs. LOAD FILE concept
 
 # pv CreateTables.sql | mysql --defaults-file=my.cfg -h localhost "db_"$nameDB
+
+if [ "$1" == "create" ]; then
+  echo "[RunCommands] Done creating!"
+
+else
+  echo "[RunCommands] Done inserting!"
+
+fi
