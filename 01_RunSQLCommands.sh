@@ -39,6 +39,8 @@ elif [ "$1" == "count" ] || [ "$1" == "list" ]; then
 
   cmd_to_send="$cmd_use $cmd_add"
 
+  echo "[RunCommands] Sending Cmd: <$cmd_to_send>"
+
   mysql --defaults-file=my.cfg -h localhost -e "$cmd_to_send"
   echo "[RunCommands] Connect is Fin!"
   exit 0
