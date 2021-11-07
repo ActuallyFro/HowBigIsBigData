@@ -22,23 +22,20 @@ if [ "$1" == "connect" ]; then
   echo "[RunCommands] Connect is Fin!"
   exit 0
 
-elif [ "$1" == "count" ]; then
+elif [ "$1" == "count" ] || [ "$1" == "list" ]; then
   nameTest="test"
   dbname="db_"$nameTest
   tableName="tbl_"$nameTest
-  cmd_count="USE $dbname; SELECT COUNT(*) FROM $tableName;"
 
-  echo "$cmd_count" | mysql --defaults-file=my.cfg -h localhost
-  echo "[RunCommands] Connect is Fin!"
-  exit 0
+  if [ "$1" == "list" ]; then
+    cmd_add="SELECT * FROM $tableName;"
+  elif [ "$1" == "count" ]; then
+    cmd_add="SELECT COUNT(*) FROM $tableName;"
+  fi
 
-elif [ "$1" == "list" ]; then
-  nameTest="test"
-  dbname="db_"$nameTest
-  tableName="tbl_"$nameTest
-  cmd_count="USE $dbname; SELECT * FROM $tableName;"
+  cmd_to_send="$cmd_use $cmd_add"
 
-  echo "$cmd_count" | mysql --defaults-file=my.cfg -h localhost
+  mysql --defaults-file=my.cfg -h localhost -e "$cmd_to_send"
   echo "[RunCommands] Connect is Fin!"
   exit 0
 
