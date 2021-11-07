@@ -98,6 +98,12 @@ function insertIntoTable() {
 
 }
 
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <action>"
+  echo "  action: create | insert"
+  exit 1
+fi
+
 user="bigdata"
 file="CreateTables.sql"
 rm -f $file
