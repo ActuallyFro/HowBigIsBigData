@@ -25,7 +25,7 @@
 #include <limits>
 #include <chrono>
 #include <string>
-// #include <numeric>
+#include <sstream>
 
 // https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
 std::string getTimeStr(){
@@ -38,6 +38,35 @@ std::string getTimeStr(){
     s.resize(19);
 
     return s;
+}
+
+std::string generateRandUUID(){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, std::numeric_limits<int>::max());
+
+    std::string uuid;
+    std::stringstream ss;
+
+    //get random hexadecimal (length is 8 -- to get to 36: run five times)
+    for(int i = 0; i < 5; i++){ //SOME evidence of strings NOT being 8, so for margin...run 5
+        ss << std::hex << dis(gen);
+    }
+
+    uuid = ss.str();
+
+    // Removed for NOW, since mysql saves an CONCAT operation withOUT them...
+    // //add UUID hypens
+    // uuid.insert(8, 1, '-');
+    // uuid.insert(13, 1, '-');
+    // uuid.insert(18, 1, '-');
+    // uuid.insert(23, 1, '-');
+
+    // Gives hex string of : 8-4-4-4-12 (32 hexadecimal characters and 4 hyphens) https://en.wikipedia.org/wiki/Universally_unique_identifier
+    // uuid.resize(36);    //IF hypens!!!
+    uuid.resize(32);
+
+    return uuid;
 }
 
 int main(int argc, char *argv[]) {
@@ -69,6 +98,9 @@ int main(int argc, char *argv[]) {
 
   for(int n=0; n<range; n++){
     // std::random_device rd2;     //Get a random seed from the OS entropy device, or whatever
+
+    //-----------------------------------------------------
+    //GenerateRandom Float:
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::subtract_with_carry_engine<unsigned,24,10,24> eng2(seed);
 
@@ -89,8 +121,11 @@ int main(int argc, char *argv[]) {
     } else {
       result = result/partial*(-1)+partial;
     }
+    //-----------------------------------------------------
 
-    std::cout << std::to_string(result) << std::endl; //<< "[Partial -- " << partial << "]" 
+    auto newUUID = generateRandUUID();
+
+    std::cout << newUUID << "," << std::to_string(result) << std::endl; //<< "[Partial -- " << partial << "]" 
     old = result;
     toggle = !toggle;
 
