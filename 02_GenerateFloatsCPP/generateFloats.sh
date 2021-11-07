@@ -55,15 +55,33 @@ elif [ "$1" == "generate" ]; then
   else
     echo "[TEST] $count floats are NOT unique! (expected: $2)"
     diffCount=$(($2 - $count))
-    echo "[WARN] Removing '$diffCount' total duplicates..."
+    echo "[WARN]     Removing '$diffCount' total duplicates..."
 
-    head -n 1 "../"$outputFile > tempHead.csv
-    echo "-- Tried provided int of '$2', but duplicates reduced it to '$count'!" > temp.csv
+    head -n 1 "../"$outputFile > "./"$outputFile
+    echo "-- Tried provided int of '$2', but duplicates reduced it to '$count'!" >> "./"$outputFile
 
-    echo "[WARN] Reducing dupes, and shuffling..."
-    cat "../"$outputFile | grep -v "\-\-" | tr "," "\n" | grep -v "\." | sort | uniq | shuf >> temp.csv
+    tail -n +3 "../"$outputFile > NoHeader.csv
 
-    echo "[WARN] Moving file back.."
+    echo "[WARN]     Reducing dupes, and shuffling..."
+    cat "../"$outputFile | grep -v "\-\-" | tr "," "\n" | grep -v "\." | sort | uniq -c | sort -n >> UUIDsByCount.md #FULL
+    #removed uniques
+    cat UUIDsByCount.md | grep -v '^      1 ' | sed "s/      //g" > UUIDdupes.md
+    rm UUIDsByCount.md
+
+    arrayOfDupes=($(cat UUIDdupes.md | awk '{print $2}'))
+    rm UUIDdupes.md
+
+    #loop over  arrayOfDupes, use sed to remove lines containing the Dupe from NoHeader.csv
+    echo "[WARN]     Removing ALL duplicate lines..."
+    for i in "${arrayOfDupes[@]}"; do
+      sed -i "/$i/d" NoHeader.csv
+    done
+
+    echo "[WARN]     Shuffling..."
+    cat NoHeader.csv | shuf >> "./"$outputFile
+
+    echo "[WARN]     Moving file back.."
+    mv "./"$outputFile ../
     mv temp.csv "../"$outputFile
 
     echo "[TEST] RE-Checking for Uniqueness..."
@@ -74,7 +92,7 @@ elif [ "$1" == "generate" ]; then
       echo "[TEST] All $count floats are unique!"
     else
       #ERROR and quit!
-      echo "[ERROR] $countAgain floats are NOT unique! (expected: $deltaCount)"
+      echo "[ERROR] NOT 1:1 UNIQUE! ONLY $countAgain floats are unique! (expected: $deltaCount)"
       exit 2
     fi
 
