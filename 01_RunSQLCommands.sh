@@ -22,7 +22,7 @@ if [ "$1" == "connect" ]; then
   echo "[RunCommands] Connect is Fin!"
   exit 0
 
-elif [ "$1" == "count" ] || [ "$1" == "list" ]; then
+elif [ "$1" == "count" ] || [ "$1" == "list" ] || [ "$1" == "size" ]; then
   nameTest="test"
   dbname="db_"$nameTest
   tableName="tbl_"$nameTest
@@ -36,6 +36,10 @@ elif [ "$1" == "count" ] || [ "$1" == "list" ]; then
 
   elif [ "$1" == "count" ]; then
     cmd_add="SELECT COUNT(*) FROM $tableName;"
+
+  elif [ "$1" == "size" ]; then
+    # https://stackoverflow.com/questions/1733507/how-to-get-size-of-mysql-database
+    cmd_add="SELECT table_schema AS "Database", SUM(data_length + index_length) / 1024 / 1024 AS "Size (MB)" FROM information_schema.TABLES GROUP BY table_schema"
   fi
 
   cmd_to_send="$cmd_use $cmd_add"
