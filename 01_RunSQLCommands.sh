@@ -1,14 +1,13 @@
 #!/bin/bash
 
-if [ -z "$(which pv)" ]; then
-  echo "[ERROR] pv is not installed"
-  exit 1
-fi
-
-
 if [ $# -ne 1 ]; then
   echo "Usage: $0 <action>"
   echo "  action: create | insert "
+  exit 1
+fi
+
+if [ -z "$(which mysql)" ]; then
+  echo "[ERROR] mysql is not installed!"
   exit 1
 fi
 
@@ -23,12 +22,28 @@ if [ "$1" == "connect" ]; then
   echo "[RunCommands] Connect is Fin!"
   exit 0
 
+elif [ "$1" == "count" ]; then
+  nameTest="test"
+  dbname="db_"$nameTest
+  tableName="tbl_"$nameTest
+  cmd_count="USE $dbname; SELECT COUNT(*) FROM $tableName;"
+
+  echo "$cmd_count" | mysql --defaults-file=my.cfg -h localhost
+  echo "[RunCommands] Connect is Fin!"
+  exit 0
+
+
 elif [ "$1" == "create" ]; then
   file="CreateTables.sql"
 fi
 
 if [ ! -f "$file" ]; then
   echo "[ERROR] $file DOES NOT exist! Aborting..."
+  exit 1
+fi
+
+if [ -z "$(which pv)" ]; then
+  echo "[ERROR] pv is not installed"
   exit 1
 fi
 
