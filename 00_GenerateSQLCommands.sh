@@ -60,6 +60,8 @@ function createDatabase() {
   echo "-- USE $dbname;" >> $file
 
   echo "-- GRANT ALL PRIVILEGES ON $dbname.* TO '$3'@'localhost';" >> $file #IDENTIFIED BY '$dbname';" >> $2
+  echo "" >> $file
+  echo "-- NUCLEAR: GRANT ALL PRIVILEGES ON *.*  TO '$3'@'localhost';" >> $file
 
   echo "" >> $file
 }
