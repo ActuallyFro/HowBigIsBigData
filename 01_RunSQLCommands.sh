@@ -86,6 +86,11 @@ if [ "$1" == "create" ]; then
   echo "[RunCommands] Done creating!"
 
 else
+  generatedFloatsFile="generateRandFloat.csv"
+  newCSVFile=`cat InsertTables.sql | sed "s/INFILE /###\n/g" | sed "s/INTO/\n###/g" | grep -v "###" | tr -d "'"`
+  echo "[RunCommands] Updating .csv ("$newCSVFile")"
+  rm -f "$newCSVFile"
+  sudo cp "$generatedFloatsFile" "$newCSVFile" #Assumes mysql is still sudo blocked...
   cmd_to_send=`cat $file`
 
   echo "[RunCommands] Sending Cmd: <$cmd_to_send>"
