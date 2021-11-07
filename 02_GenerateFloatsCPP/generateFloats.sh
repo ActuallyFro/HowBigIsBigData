@@ -41,7 +41,7 @@ elif [ "$1" == "generate" ]; then
     echo "Generating $2 floats to ../$outputFile"
     ./"$generatorName" "$2" > "$outputFile"
   fi
-  sed '^$d' -i "$outputFile" #delete empty lines
+  sed '/^$/d' -i "$outputFile" #delete empty lines
   mv "$outputFile" ../
   exit 0
 fi
