@@ -125,6 +125,7 @@ function insertIntoTableFloat() {
   echo "FIELDS TERMINATED BY ',' " >> $file
   # echo "ENCLOSED BY '\"' " >> $file #currently they ARE NOT
   echo "LINES TERMINATED BY '\n' " >> $file
+  echo "IGNORE 2 LINES " >> $file #https://stackoverflow.com/questions/1618355/load-data-local-how-do-i-skip-the-first-line 
   echo "(@uuid,col2) " >> $file
   echo "SET col1= UUID_TO_BIN(@uuid);" >> $file
 
@@ -160,6 +161,7 @@ function insertIntoTableLongtext() {
   echo "FIELDS TERMINATED BY ',' " >> $file
   # echo "ENCLOSED BY '\"' " >> $file #currently they ARE NOT
   echo "LINES TERMINATED BY '\n' " >> $file
+  echo "IGNORE 2 LINES " >> $file #https://stackoverflow.com/questions/1618355/load-data-local-how-do-i-skip-the-first-line 
   echo "(@uuid,col2) " >> $file
   echo "SET col1= UUID_TO_BIN(@uuid);" >> $file
 
