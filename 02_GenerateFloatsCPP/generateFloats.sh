@@ -38,9 +38,10 @@ elif [ "$1" == "generate" ]; then
     echo "Generating 100 floats to $outputFile"
     ./"$generatorName" > "$outputFile"
   else
-    echo "Generating $2 floats to $outputFile"
+    echo "Generating $2 floats to ../$outputFile"
     ./"$generatorName" "$2" > "$outputFile"
   fi
+  sed '^$d' -i "$outputFile" #delete empty lines
   mv "$outputFile" ../
   exit 0
 fi
