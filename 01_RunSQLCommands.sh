@@ -89,7 +89,7 @@ else
   generatedFloatsFile="generateRandFloat.csv"
   newCSVFile=`cat InsertTables.sql | sed "s/INFILE /###\n/g" | sed "s/INTO/\n###/g" | grep -v "###" | tr -d "'"`
   echo "[RunCommands] Updating .csv ("$newCSVFile")"
-  rm -f "$newCSVFile"
+  #sudo rm -f "$newCSVFile" #--it is just copied over... :-/
   sudo cp "$generatedFloatsFile" "$newCSVFile" #Assumes mysql is still sudo blocked...
   cmd_to_send=`cat $file`
 
