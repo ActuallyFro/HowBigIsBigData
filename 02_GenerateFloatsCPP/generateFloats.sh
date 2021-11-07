@@ -54,7 +54,29 @@ elif [ "$1" == "generate" ]; then
     echo "[TEST] All $count floats are unique!"
   else
     echo "[TEST] $count floats are NOT unique! (expected: $2)"
-  fi
+    diffCount=$($2 - $count)
+    echo "[WARN] Removing '$diffCount' total duplicates..."
+
+    head -n 1 "../"$outputFile > tempHead.csv
+    echo "-- Tried provided int of '$2', but duplicates reduced it to '$count'!" > temp.csv
+
+    echo "[WARN] Reducing dupes, and shuffling..."
+    cat "../"$outputFile | grep -v "\-\-" | tr "," "\n" | grep -v "\." | sort | uniq | shuf >> temp.csv
+
+    echo "[WARN] Moving file back.."
+    mv temp.csv "../"$outputFile
+
+    echo "[TEST] RE-Checking for Uniqueness..."
+    #bash run a local script (CountUniqUUIDs.sh) save result in variable (count)
+    countAgain=$(bash ./CountUniqUUIDs.sh)
+    deltaCount=$($2 - $diffCount)
+    if [ "$countAgain" == "$deltaCount" ]; then
+      echo "[TEST] All $count floats are unique!"
+    else
+      #ERROR and quit!
+      echo "[ERROR] $countAgain floats are NOT unique! (expected: $deltaCount)"
+      exit 2
+    fi
 
   exit 0
 fi
