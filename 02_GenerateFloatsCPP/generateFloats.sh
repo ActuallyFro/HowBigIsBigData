@@ -3,22 +3,40 @@ generatorName="generateRandFloat"
 generatorSource="${generatorName}.cpp"
 outputFile="${generatorName}.md"
 
-# commandline argument check if $1 is "build", then build the project
-if [ "$1" == "build" ]; then
-  echo "Building project..."
-  g++ -o "$generatorName" "$generatorSource" -std=c++17
-  echo "Done!"
-  exit 0
-
 #if "--help"
-elif [ "$1" == "--help" ] || [ "$1" == "" ]; then
+if [ "$1" == "--help" ] || [ "$1" == "" ]; then
   echo "Usage: $0 [OPTION]"
   echo "Options:"
   echo "  --help: Print this help message"
   echo "  build: Build the project"
+  echo "  generate <#>: generates floats (default to 1 if # blank)"
   exit 0
 fi
 
-echo "Generating random floats..."
-./generateRandFloat > "$outputFile"
+# commandline argument check if $1 is "build", then build the project
+if [ "$1" == "build" ]; then
+  echo "Building project..."
+  
+  if [ ! -f "$generatorSource" ]; then
+    echo "Error: $generatorSource does not exist!"
+    exit 1
+  fi
+
+  g++ -o "$generatorName" "$generatorSource" -std=c++17
+  echo "Done!"
+  exit 0
+
+elif [ "$1" == "generate" ]; then
+  if [ "$2" == "" ]; then
+    echo "Generating 100 floats to $outputFile"
+    ./"$generatorName" > "$outputFile"
+  else
+    echo "Generating $2 floats to $outputFile"
+    ./"$generatorName" "$2" > "$outputFile"
+  fi
+  exit 0
+fi
+
+fi
+
 echo "Done!"
