@@ -100,10 +100,11 @@ function createTableFloat() {
 
 
 function insertIntoTableFloat() {
+  mysql-sec-fil-dir="/var/lib/mysql-files"
   dbname="db_"$1
-  tableName="tbl_"$1
   file="$2"
   insertFile="$3"
+  tableName="tbl_"$1
 
   if [ ! -f "$insertFile" ]; then
     echo "1"
@@ -134,16 +135,18 @@ function insertIntoTableFloat() {
   # echo "SET col1= UUID_TO_BIN(@uuid);" >> $file
 
   #Single Line to use command VS. .sql/CAT
-  echo "USE $dbname; LOAD DATA INFILE '$insertFile' INTO TABLE $tableName FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES (@uuid,value) SET id= UUID_TO_BIN(@uuid);" >> $file
+  echo "USE $dbname; LOAD DATA INFILE '$mysql-sec-fil-dir/$insertFile' INTO TABLE $tableName FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES (@uuid,value) SET id= UUID_TO_BIN(@uuid);" >> $file
 
   echo "0"
 }
 
 function insertIntoTableLongtext() {
-  tableName="tbl_"$1"_longtext"
+  mysql-sec-fil-dir="/var/lib/mysql-files"
+  dbname="db_"$1
   file="$2"
   insertFile="$3"
-
+  tableName="tbl_"$1"_longtext"
+  
   if [ ! -f "$insertFile" ]; then
     echo "1"
     return
@@ -174,7 +177,7 @@ function insertIntoTableLongtext() {
   # echo "SET col1= UUID_TO_BIN(@uuid);" >> $file
 
   #Single Line to use command VS. .sql/CAT
-  echo "USE $dbname; LOAD DATA INFILE '$insertFile' INTO TABLE $tableName FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES (@uuid,value) SET id= UUID_TO_BIN(@uuid);" >> $file
+  echo "USE $dbname; LOAD DATA INFILE '$mysql-sec-fil-dir/$insertFile' INTO TABLE $tableName FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES (@uuid,value) SET id= UUID_TO_BIN(@uuid);" >> $file
 
   echo "0"
 }
