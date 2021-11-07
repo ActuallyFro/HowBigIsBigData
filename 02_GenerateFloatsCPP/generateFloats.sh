@@ -43,6 +43,19 @@ elif [ "$1" == "generate" ]; then
   fi
   sed '/^$/d' -i "$outputFile" #delete empty lines
   mv "$outputFile" ../
+
+  echo "[TEST] Checking for Uniqueness..."
+
+  #bash run a local script (CountUniqUUIDs.sh) save result in variable (count)
+  count=$(bash ./CountUniqUUIDs.sh)
+
+  # Test if $count == $2
+  if [ "$count" == "$2" ]; then
+    echo "[TEST] All $count floats are unique!"
+  else
+    echo "[TEST] $count floats are NOT unique! (expected: $2)"
+  fi
+
   exit 0
 fi
 
