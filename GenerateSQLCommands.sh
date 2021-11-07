@@ -39,54 +39,70 @@ createRandFloat(){
 # Create the database
 function createDatabase() {
   dbname="db_"$1
-  echo "CREATE DATABASE IF NOT EXISTS $dbname;" >> $file
-  echo "" >> $file
-  echo "USE $dbname;" >> $file
-  # CREATE TABLE IF NOT EXISTS `test` (
-  #      `test` float NOT NULL
-  # ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-  # INSERT INTO `test`(`test`) VALUES (16777225)
+  echo "-- AS ROOT:" >> $2
+  echo "-- --------" >> $2
+  echo "-- CREATE DATABASE $dbname;" >> $2
+  #echo "-- CREATE DATABASE IF NOT EXISTS $dbname;" >> $file
+  echo "" >> $2
+  echo "-- USE $dbname;" >> $2
 
-  # SELECT * FROM `test`
-  echo "" >> $file
+  echo "-- GRANT ALL PRIVILEGES ON $dbname.* TO '$3'@'localhost';" >> $2 #IDENTIFIED BY '$dbname';" >> $2
+
+  echo "" >> $2
 }
 
 function createTableLongtext() {
+  dbname="db_"$1
   tableName="tbl_"$1
   file="$2"
-# CREATE TABLE customers (
-#     id BINARY(16) PRIMARY KEY,
-#     name VARCHAR(255)
-# );
 
+  echo "USE $dbname;" >> $2
+  echo "" >> $2
+  #https://www.mysqltutorial.org/mysql-uuid/
   echo "CREATE TABLE IF NOT EXISTS $tableName (
       id BINARY(16) PRIMARY KEY,
       name LONGTEXT(255)
-  );" >> $file
+);" >> $2
 
-  echo "" >> $file
+  echo "" >> $2
 }
 
 function createTableFloat() {
+  dbname="db_"$1
   tableName="tbl_"$1
   file="$2"
-# CREATE TABLE customers (
-#     id BINARY(16) PRIMARY KEY,
-#     name VARCHAR(255)
-# );
+
+  echo "USE $dbname;" >> $2
+  echo "" >> $2
 
   echo "CREATE TABLE IF NOT EXISTS $tableName (
       id BINARY(16) PRIMARY KEY,
       value FLOAT(30,6)
-  );" >> $file
+);" >> $2
 
-  echo "" >> $file
+  echo "" >> $2
 }
 
+
+function insertIntoTable() {
+  tableName="tbl_"$1
+  file="$2"
+  #echo "INSERT INTO $tableName (id, name) VALUES (1, 'John');" >> $file
+
+  #https://www.mysqltutorial.org/mysql-uuid/
+  # INSERT INTO customers(id, name)
+  # VALUES(UUID_TO_BIN(UUID()),'John Doe'),
+  #       (UUID_TO_BIN(UUID()),'Will Smith'),
+  #       (UUID_TO_BIN(UUID()),'Mary Jane');
+
+}
+
+user="bigdata"
 file="CreateTables.sql"
 rm -f $file
+touch $file
 
 # createRandFloat 
-createDatabase "test" "$file"
+createDatabase "test" "$file" "$user"
 createTableFloat "test" "$file"
