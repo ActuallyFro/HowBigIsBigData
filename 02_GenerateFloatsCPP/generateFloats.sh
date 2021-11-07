@@ -18,12 +18,12 @@ if [ "$1" == "build" ]; then
   whereIsGPP=`which g++`
 
   if [ -z "${whereIsGPP}" ]; then
-    echo "g++ not found!"
+    echo "[ERROR] g++ not found! -- aborting build!"
     exit 1
   fi
 
   if [ ! -f "$generatorSource" ]; then
-    echo "Error: $generatorSource does not exist!"
+    echo "[ERROR] $generatorSource does not exist! -- aborting build!"
     exit 1
   fi
 
