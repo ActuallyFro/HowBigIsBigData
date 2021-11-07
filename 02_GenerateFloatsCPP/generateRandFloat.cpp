@@ -24,6 +24,17 @@
 #include <random>
 #include <limits>
 #include <chrono>
+#include <string>
+// #include <numeric>
+
+#https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
+std::string getTimeStr(){
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+
+    std::string s(30, '\0');
+    std::strftime(&s[0], s.size(), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
+    return s;
+}
 
 int main(int argc, char *argv[]) {
   std::random_device rd;     //Get a random seed from the OS entropy device, or whatever
@@ -39,10 +50,17 @@ int main(int argc, char *argv[]) {
   auto toggle = true;
   int range;
   // if no input, then default range to 100
+
+  auto dateAndTime = getTimeStr();
+  std::cout << "-- Generated at: " << dateAndTime << std::endl;
+
   if (argc == 1) {
+    std::cout << "-- No int provided, defaulted to 100!" << std::endl;
     range = 100;
+
   } else {
     range = atoi(argv[1]);
+    std::cout << "-- Using provided int of '" << range <<"'!" << std::endl;
   }
 
   for(int n=0; n<range; n++){
