@@ -8,7 +8,7 @@ fi
 
 if [ -z "$(which mysql)" ]; then
   echo "[ERROR] mysql is not installed!"
-  exit 1
+  exit 2
 fi
 
 # FOR UUIDS! https://remarkablemark.org/blog/2020/05/21/mysql-uuid-bin/
@@ -63,12 +63,12 @@ fi
 
 if [ ! -f "$file" ]; then
   echo "[ERROR] $file DOES NOT exist! Aborting..."
-  exit 1
+  exit 3
 fi
 
 if [ -z "$(which pv)" ]; then
   echo "[ERROR] pv is not installed"
-  exit 1
+  exit 4
 fi
 
 # # WORKS
@@ -91,11 +91,19 @@ else
   echo "[RunCommands] Updating .csv ("$newCSVFile")"
   #sudo rm -f "$newCSVFile" #--it is just copied over... :-/
   sudo cp "$generatedFloatsFile" "$newCSVFile" #Assumes mysql is still sudo blocked...
+
+  # check if newCSVFile exists, abort if not
+  if [ ! -f "$newCSVFile" ]; then
+    echo "[ERROR] $newCSVFile DOES NOT exist! Aborting..."
+    exit 5
+  fi
   cmd_to_send=`cat $file`
 
   echo "[RunCommands] Sending Cmd: <$cmd_to_send>"
 
   mysql --defaults-file=my.cfg -h localhost -e "$cmd_to_send"
+  sudo rm -f "$newCSVFile"
+
   echo "[RunCommands] Done inserting!"
 
 fi
