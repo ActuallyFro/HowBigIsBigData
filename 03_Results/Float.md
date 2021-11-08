@@ -62,3 +62,14 @@ focal@focal:~/My_Programming/HowBigIsBigData$ ./01_RunSQLCommands.sh top-ten
 +------------------------------------+-------------------------+
 [RunCommands] Connect is Fin!
 ```
+
+
+Direct Table Access - Size
+==========================
+```
+root@focal:/var/lib/mysql/db_test# ls -lahtr
+total 77M
+drwxr-x--- 2 mysql mysql 4.0K Nov  7 02:55 .
+drwx------ 7 mysql mysql 4.0K Nov  7 19:15 ..
+-rw-r----- 1 mysql mysql  76M Nov  8 01:22 tbl_test.ibd
+```
