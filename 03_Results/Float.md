@@ -1,8 +1,16 @@
+---
+title: Analyzing MySQL FLOAT (Select Video Selections)
+author: Brandon Froberg
+date: 7 Nov 21
+geometry: margin=1in
+...
+
 Database Size
 ==============
 ```
 focal@focal:~/My_Programming/HowBigIsBigData$ ./01_RunSQLCommands.sh size
-[RunCommands] Sending Cmd: <USE db_test; SELECT table_schema AS "Database", SUM(data_length + index_length) / 1024 / 1024 AS "Size (MB)" FROM information_schema.TABLES GROUP BY table_schema>
+[RunCommands] Sending Cmd: <USE db_test; SELECT table_schema AS "Database", SUM(data_length +
+index_length) / 1024 / 1024 AS "Size (MB)" FROM information_schema.TABLES GROUP BY table_schema>
 +--------------------+------------+
 | Database           | Size (MB)  |
 +--------------------+------------+
@@ -19,7 +27,9 @@ Table Size
 ==========
 ```
 focal@focal:~/My_Programming/HowBigIsBigData$ ./01_RunSQLCommands.sh size-tables
-[RunCommands] Sending Cmd: <USE db_test; SELECT table_name AS `Table`, round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` FROM information_schema.TABLES WHERE table_schema = "db_test" AND table_name = "tbl_test";>
+[RunCommands] Sending Cmd: <USE db_test; SELECT table_name AS `Table`, round(((data_length + 
+index_length) / 1024 / 1024), 2) `Size in MB` FROM information_schema.TABLES WHERE 
+table_schema = "db_test" AND table_name = "tbl_test";>
 +----------+------------+
 | Table    | Size in MB |
 +----------+------------+
@@ -87,6 +97,7 @@ drwxr-x--- 2 mysql mysql 4.0K Nov  8 03:04 .
 -rw-r----- 1 mysql mysql 112K Nov  8 03:04 tbl_test.ibd
 ```
 
+```
 mysql> SELECT COUNT(*) FROM tbl_test;
 +----------+
 | COUNT(*) |
@@ -115,12 +126,15 @@ mysql> SELECT * FROM tbl_test LIMIT 15;
 | 0x10002F0530FBCBB35BD8E16A6137601F |     281773768704.000000 |
 | 0x10003C386A34D24742A53242E1953146 |  -39988418838528.000000 |
 +------------------------------------+-------------------------+
+```
 
+```
 root@focal:/home/focal/My_Programming/HowBigIsBigData# ls /var/lib/mysql/db_test/ -alhtr
 total 77M
 drwx------ 7 mysql mysql 4.0K Nov  7 19:15 ..
 drwxr-x--- 2 mysql mysql 4.0K Nov  8 03:04 .
 -rw-r----- 1 mysql mysql  76M Nov  8 03:06 tbl_test.ibd
+```
 
 (Roughly 146% increase in mysql vs. csv)
 

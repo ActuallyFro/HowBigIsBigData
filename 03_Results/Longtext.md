@@ -1,3 +1,9 @@
+---
+title: Analyzing MySQL LONGTEXT (Select Video Selections)
+author: Brandon Froberg
+date: 7 Nov 21
+geometry: margin=1in
+...
 
 LONGTEXT!
 ==========
@@ -13,7 +19,8 @@ mysql> show databases;
 | sys                |
 +--------------------+
 5 rows in set (0.00 sec)
-
+```
+```
 mysql> use db_test;
 Reading table information for completion of table and column names
 You can turn off this feature to get a quicker startup with -A
@@ -30,7 +37,6 @@ mysql> show tables;
 
 mysql> SELECT * FROM tbl_test_longtext;
 Empty set (0.00 sec)
-
 ```
 
 
@@ -47,7 +53,9 @@ drwxr-x--- 2 mysql mysql 4.0K Nov  8 03:13 .
 ```
 focal@focal:~/My_Programming/HowBigIsBigData$ time ./01_RunSQLCommands.sh insert
 [RunCommands] Updating .csv (/var/lib/mysql-files/generateRandFloat.csv )
-[RunCommands] Sending Cmd: <USE db_test; LOAD DATA INFILE '/var/lib/mysql-files/generateRandFloat.csv' INTO TABLE tbl_test_longtext FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES (@uuid,value) SET id= UUID_TO_BIN(@uuid);>
+[RunCommands] Sending Cmd: <USE db_test; LOAD DATA INFILE '/var/lib/mysql-files/generateRandFloat.csv'
+ INTO TABLE tbl_test_longtext FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES 
+ (@uuid,value) SET id= UUID_TO_BIN(@uuid);>
 ERROR 1054 (42S22) at line 1: Unknown column 'value' in 'field list'
 [RunCommands] Done inserting!
 
@@ -62,7 +70,9 @@ SHOULD BE/now is: uuid (binary), and value(longtext)
 ```
 focal@focal:~/My_Programming/HowBigIsBigData$ time ./01_RunSQLCommands.sh insert
 [RunCommands] Updating .csv (/var/lib/mysql-files/generateRandFloat.csv )
-[RunCommands] Sending Cmd: <USE db_test; LOAD DATA INFILE '/var/lib/mysql-files/generateRandFloat.csv' INTO TABLE tbl_test_longtext FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES (@uuid,value) SET id= UUID_TO_BIN(@uuid);>
+[RunCommands] Sending Cmd: <USE db_test; LOAD DATA INFILE '/var/lib/mysql-files/generateRandFloat.csv'
+ INTO TABLE tbl_test_longtext FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 2 LINES 
+ (@uuid,value) SET id= UUID_TO_BIN(@uuid);>
 [RunCommands] Done inserting!
 
 real    0m20.218s
@@ -80,6 +90,7 @@ mysql> SELECT COUNT(*) FROM tbl_test_longtext;
 1 row in set (0.11 sec)
 
 mysql> SELECT * FROM tbl_test_longtext LIMIT 15;
+
 +------------------------------------+-------------------------+
 | id                                 | value                   |
 +------------------------------------+-------------------------+
@@ -109,6 +120,9 @@ total 181M
 drwxr-x--- 2 mysql mysql 4.0K Nov  8 03:21 .
 drwx------ 7 mysql mysql 4.0K Nov  8 03:22 ..
 -rw-r----- 1 mysql mysql 104M Nov  8 03:23 tbl_test_longtext.ibd
+```
+
+```
 root@focal:/home/focal/My_Programming/HowBigIsBigData# ls /var/lib/mysql/db_test/ -latr
 total 184336
 -rw-r----- 1 mysql mysql  79691776 Nov  8 03:06 tbl_test.ibd
@@ -117,12 +131,15 @@ drwx------ 7 mysql mysql      4096 Nov  8 03:22 ..
 -rw-r----- 1 mysql mysql 109051904 Nov  8 03:23 tbl_test_longtext.ibd
 root@focal:/home/focal/My_Programming/HowBigIsBigData# echo 109051904*100/79691776 | bc
 136
-root@focal:/home/focal/My_Programming/HowBigIsBigData# echo "it's 136% LARGER to store longtext over floats..."
-it's 136% LARGER to store longtext over floats...
+root@focal:/home/focal/My_Programming/HowBigIsBigData# echo "it's 136% LARGER to store longtext
+ over floats..."
 ```
 
-6/4 = 1.5 == 150%
+Summary-ish
+===========
+It's 136% LARGER to store longtext over floats...
 
-5/4 = 1.25 == 125%
+1. 6/4 = 1.5 == 150%
+2. 5/4 = 1.25 == 125%
 
 WAG: the LONGTEXT uses "as-needed bytes" to fill the string content. BUT it's (from this subset) in the worst case adding two bytes to the base of 4 bytes of a float.
