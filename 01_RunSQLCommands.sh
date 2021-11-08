@@ -2,8 +2,9 @@
 
 if [ $# -ne 1 ]; then
   echo "Usage: $0 <action>"
-  echo "  action: create | insert "
-  exit 1
+  echo "  action: create | insert | connect "
+  echo "  count | list | size | size-tables | erase | erase-longtext"
+  exit 0
 fi
 
 if [ -z "$(which mysql)" ]; then
@@ -40,6 +41,10 @@ elif [ "$1" == "count" ] || [ "$1" == "list" ] || [ "$1" == "size" ] || [ "$1" =
   elif [ "$1" == "size" ]; then
     # https://stackoverflow.com/questions/1733507/how-to-get-size-of-mysql-database
     cmd_add="SELECT table_schema AS \"Database\", SUM(data_length + index_length) / 1024 / 1024 AS \"Size (MB)\" FROM information_schema.TABLES GROUP BY table_schema"
+
+  elif [ "$1" == "size-tables" ]; then
+    #https://chartio.com/resources/tutorials/how-to-get-the-size-of-a-table-in-mysql/
+    cmd_add="SELECT TABLE_NAME AS \`Table\`, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS \`Size (MB)\` FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"$dbname\" ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;"
 
   elif [ "$1" == "erase" ] || [ "$1" == "erase-longtext" ]; then
     if [ "$1" == "erase-longtext" ]; then
