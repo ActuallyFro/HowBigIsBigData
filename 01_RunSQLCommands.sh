@@ -95,7 +95,8 @@ else
   newCSVFile=`cat InsertTables.sql | sed "s/INFILE /###\n/g" | sed "s/INTO/\n###/g" | grep -v "###" | tr -d "'"`
   echo "[RunCommands] Updating .csv ("$newCSVFile")"
   #sudo rm -f "$newCSVFile" #--it is just copied over... :-/
-  sudo cp "$generatedFloatsFile" "$newCSVFile" #Assumes mysql is still sudo blocked...
+  #sudo cp "$generatedFloatsFile" "$newCSVFile" #Assumes mysql is still sudo blocked...
+  cp "$generatedFloatsFile" "$newCSVFile" #yeah ... gonna (1) sudo chown `whoami` /var/lib/mysql-files && (2) sudo chmod -R a+rwx /var/lib/mysql-files
 
   if [ ! -f "$generatedFloatsFile" ]; then
     echo "[ERROR] $generatedFloatsFile DOES NOT exist! Aborting..."
@@ -112,7 +113,8 @@ else
   echo "[RunCommands] Sending Cmd: <$cmd_to_send>"
 
   mysql --defaults-file=my.cfg -h localhost -e "$cmd_to_send"
-  sudo rm -f "$newCSVFile"
+  # sudo rm -f "$newCSVFile"
+  rm -f "$newCSVFile"
 
   echo "[RunCommands] Done inserting!"
 
