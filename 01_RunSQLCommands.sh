@@ -23,7 +23,7 @@ if [ "$1" == "connect" ]; then
   echo "[RunCommands] Connect is Fin!"
   exit 0
 
-elif [ "$1" == "count" ] || [ "$1" == "list" ] || [ "$1" == "size" ] || [ "$1" == "erase" ]  || [ "$1" == "erase-longtext" ]; then
+elif [ "$1" == "count" ] || [ "$1" == "list" ] || [ "$1" == "size" ] || [ "$1" == "erase" ]  || [ "$1" == "erase-longtext" ] || [ "$1" == "size-tables" ]; then
   nameTest="test"
   dbname="db_"$nameTest
   tableName="tbl_"$nameTest
