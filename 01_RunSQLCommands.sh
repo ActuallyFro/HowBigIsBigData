@@ -50,7 +50,7 @@ elif [ "$1" == "count" ] || [ "$1" == "list" ] || [ "$1" == "size" ] || [ "$1" =
     # cmd_add="SELECT TABLE_NAME AS \`Table\`, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS \`Size (MB)\` FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"$dbname\" ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;"
 
     # https://stackoverflow.com/questions/9620198/how-to-get-the-sizes-of-the-tables-of-a-mysql-database
-    cmd_add="SELECT table_name AS \`Table\`, round(((data_length + index_length) / 1024 / 1024), 2) \`Size in MB\` FROM information_schema.TABLES WHERE table_schema = \"$dbname\" AND table_name = \"$tableName\";"
+    cmd_add="SELECT table_name AS \`Table\`, round(((data_length + index_length) / 1024 / 1024), 2) \`Size in MB\` FROM information_schema.TABLES WHERE table_schema = \"$dbname\"; AND table_name = \"$tableName\";"
 
   elif [ "$1" == "erase" ] || [ "$1" == "erase-longtext" ]; then
     if [ "$1" == "erase-longtext" ]; then
