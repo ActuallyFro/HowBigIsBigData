@@ -76,7 +76,7 @@ function createTableLongtext() {
   #https://www.mysqltutorial.org/mysql-uuid/
   echo "CREATE TABLE IF NOT EXISTS $tableName (
       id BINARY(16) PRIMARY KEY,
-      name LONGTEXT NOT NULL
+      value LONGTEXT NOT NULL
 );" >> $file
 
   echo "" >> $file
