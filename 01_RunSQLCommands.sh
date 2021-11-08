@@ -2,8 +2,8 @@
 
 if [ $# -ne 1 ]; then
   echo "Usage: $0 <action>"
-  echo "  action: create | insert | connect "
-  echo "  count | list | size | size-tables | erase | erase-longtext"
+  echo "  action: create | insert | erase | erase-longtext "
+  echo "  connect| count | list | size | size-tables | top-ten"
   exit 0
 fi
 
@@ -23,7 +23,7 @@ if [ "$1" == "connect" ]; then
   echo "[RunCommands] Connect is Fin!"
   exit 0
 
-elif [ "$1" == "count" ] || [ "$1" == "list" ] || [ "$1" == "size" ] || [ "$1" == "erase" ]  || [ "$1" == "erase-longtext" ] || [ "$1" == "size-tables" ]; then
+elif [ "$1" == "count" ] || [ "$1" == "list" ] || [ "$1" == "size" ] || [ "$1" == "erase" ]  || [ "$1" == "erase-longtext" ] || [ "$1" == "size-tables" ] || [ "$1" == "top-ten" ]; then
   nameTest="test"
   dbname="db_"$nameTest
   tableName="tbl_"$nameTest
@@ -41,6 +41,9 @@ elif [ "$1" == "count" ] || [ "$1" == "list" ] || [ "$1" == "size" ] || [ "$1" =
   elif [ "$1" == "size" ]; then
     # https://stackoverflow.com/questions/1733507/how-to-get-size-of-mysql-database
     cmd_add="SELECT table_schema AS \"Database\", SUM(data_length + index_length) / 1024 / 1024 AS \"Size (MB)\" FROM information_schema.TABLES GROUP BY table_schema"
+
+  elif [ "$1" == "top-ten" ]; then
+    cmd_add="SELECT * FROM $tableName LIMIT 10;"
 
   elif [ "$1" == "size-tables" ]; then
     # #https://chartio.com/resources/tutorials/how-to-get-the-size-of-a-table-in-mysql/
