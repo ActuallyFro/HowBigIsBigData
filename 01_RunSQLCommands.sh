@@ -92,10 +92,15 @@ else
   #sudo rm -f "$newCSVFile" #--it is just copied over... :-/
   sudo cp "$generatedFloatsFile" "$newCSVFile" #Assumes mysql is still sudo blocked...
 
+  if [ ! -f "$generatedFloatsFile" ]; then
+    echo "[ERROR] $generatedFloatsFile DOES NOT exist! Aborting..."
+    exit 5
+  fi
+
   # check if newCSVFile exists, abort if not
   if [ ! -f "$newCSVFile" ]; then
     echo "[ERROR] $newCSVFile DOES NOT exist! Aborting..."
-    exit 5
+    exit 6
   fi
   cmd_to_send=`cat $file`
 
