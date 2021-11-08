@@ -26,6 +26,7 @@
 #include <chrono>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 // https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
 std::string getTimeStr(){
@@ -96,8 +97,28 @@ int main(int argc, char *argv[]) {
     std::cout << "-- Using provided int of '" << range <<"'!" << std::endl;
   }
 
+  std::vector<std::string> ListOfUUIDs;
+
   for(int n=0; n<range; n++){
-    // std::random_device rd2;     //Get a random seed from the OS entropy device, or whatever
+    auto newUUID = generateRandUUID();
+
+    //-------------------------------------------
+    // UUID is the Primary Key, thus it MUST be unique...
+    // see if newUUID is already in ListOfUUIDs
+    bool alreadyExists = std::find(ListOfUUIDs.begin(), ListOfUUIDs.end(), newUUID) != ListOfUUIDs.end();
+    if(alreadyExists){
+      //Attempt to do a quick shuffle!
+      std::random_shuffle(newUUID.begin(), newUUID.end());
+
+      bool stillExists = std::find(ListOfUUIDs.begin(), ListOfUUIDs.end(), newUUID) != ListOfUUIDs.end();    
+      if(stillExists){ //Shuffle found a duplicate UUID, so skip...
+        //restart loop, decrement n
+        n--;
+        continue;
+      }
+    }
+    ListOfUUIDs.push_back(newUUID);
+    //-------------------------------------------
 
     //-----------------------------------------------------
     //GenerateRandom Float:
@@ -123,7 +144,6 @@ int main(int argc, char *argv[]) {
     }
     //-----------------------------------------------------
 
-    auto newUUID = generateRandUUID();
 
     std::cout << newUUID << "," << std::to_string(result) << std::endl; //<< "[Partial -- " << partial << "]" 
     old = result;
