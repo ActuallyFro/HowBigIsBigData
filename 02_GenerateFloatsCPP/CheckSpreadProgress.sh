@@ -8,6 +8,7 @@ while true; do
   strLen="${#percentTemp}"
   pointPos=$(($strLen-1))
 
+  #https://unix.stackexchange.com/questions/369818/how-to-insert-a-string-into-a-text-variable-at-specified-position
   percent="${percentTemp:0:$pointPos}.${percentTemp:$pointPos}"
 
   echo "$amnt/1000000 ($percent%)"
