@@ -1,24 +1,3 @@
-// // Quick hack to generate floats
-// #include <iostream>
-// #include <cstdlib>
-
-// int main(){
-//   std::cout << "Generating floats..." << std::endl;
-//   for(int i = 0; i < 100; i++){
-//     std::cout << "float " << i << " = " << (float)rand()/RAND_MAX << ";" << std::endl;
-//   }
-
-//   // Generate random longs
-//   std::cout << "Generating longs..." << std::endl;
-//   for(int i = 0; i < 100; i++){
-//     // Random max value 64 bit int
-//     std::cout << "long long" << i << " = " << (long long)rand() << ";" << std::endl;
-//     // std::cout << "long " << i << " = " << (long)rand()/RAND_MAX << ";" << std::endl;
-//   }
-
-//   return EXIT_SUCCESS;
-// }
-
 // https://stackoverflow.com/questions/22883840/c-get-random-number-from-0-to-max-long-long-integer
 #include <iostream>
 #include <random>
@@ -27,6 +6,9 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
 
 // https://stackoverflow.com/questions/17223096/outputting-date-and-time-in-c-using-stdchrono
 std::string getTimeStr(){
@@ -70,6 +52,32 @@ std::string generateRandUUID(){
     return uuid;
 }
 
+std::string generateSmolUUID() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, std::numeric_limits<int>::max());
+
+    std::string uuid;
+    std::stringstream ss;
+
+    // 7-4-4 == 15
+
+    //get random hexadecimal (length is 8 -- to get to 15: run 2 times)
+    for(int i = 0; i < 3; i++){ //SOME evidence of strings NOT being 8, so for margin...run 3
+        ss << std::hex << dis(gen);
+    }
+
+    uuid = ss.str();
+
+    uuid.resize(15);
+
+    return uuid;
+
+}
+
+//Make generic for any length: pass Byte Length; resize WILL equal that.... loops == ByteLength/8 + 1 ----^
+
+
 int main(int argc, char *argv[]) {
   std::random_device rd;     //Get a random seed from the OS entropy device, or whatever
   std::mt19937_64 eng1(rd()); //Use the 64-bit Mersenne Twister 19937 generator
@@ -99,27 +107,92 @@ int main(int argc, char *argv[]) {
 
   std::vector<std::string> ListOfUUIDs;
 
-  for(int n=0; n<range; n++){
-    auto newUUID = generateRandUUID();
+  int firstByteCounter=0;
 
-    //-------------------------------------------
-    // UUID is the Primary Key, thus it MUST be unique...
-    // see if newUUID is already in ListOfUUIDs
-    bool alreadyExists = std::find(ListOfUUIDs.begin(), ListOfUUIDs.end(), newUUID) != ListOfUUIDs.end();
-    if(alreadyExists){
-      //Attempt to do a quick shuffle!
-      std::random_shuffle(newUUID.begin(), newUUID.end());
+  for(unsigned int n=0; n<range; n++){
+    // test if range is bigger than C++ MAX unsigned int
+    if (range > std::numeric_limits<unsigned int>::max()) {
+      std::cout << "-- Range is too big, using C++ MAX unsigned int!" << std::endl;
+      range = std::numeric_limits<unsigned int>::max();
 
-      bool stillExists = std::find(ListOfUUIDs.begin(), ListOfUUIDs.end(), newUUID) != ListOfUUIDs.end();    
-      if(stillExists){ //Shuffle found a duplicate UUID, so skip...
-        //restart loop, decrement n
-        n--;
-        continue;
-      }
+      return EXIT_FAILURE;
     }
-    ListOfUUIDs.push_back(newUUID);
-    //-------------------------------------------
 
+
+    // SO UUID is: Gives hex string of : 8-4-4-4-12
+    // meaning the 128 bit number can be split into equal groups of 8-4-4 and 4-12
+    // which can further have a split to enforce LEADING BYTE selection equally by: 1 | 7-4-4 | 4-12
+    // The first byte will simply be rolled from 0 to F, the middle bytes will be random, and the last 16 bytes are the unsigned n counter to cover the FULL unsigneed 64 bit space
+
+    // THIS IS AFWUL, but hopefully FAST
+    // (1) FirstByte | (2) smolUUID | (3) fakeUUID
+
+    // 1) FirstByte
+    // =============
+    std::string FirstByte;
+
+    std::stringstream ss;
+    ss << std::hex << firstByteCounter;
+    FirstByte = ss.str();
+
+    firstByteCounter++;
+    if (firstByteCounter > 15) {
+      firstByteCounter = 0;
+    }
+
+    // Debug firstBYTE
+    // std::cout << "-- FirstByte: " << FirstByte[0] << "(Counter: " << firstByteCounter << ")" << std::endl;
+
+    // 2)smolUUID
+    // =============
+    // FULL UUID: auto newUUID = generateRandUUID();
+    auto smolUUID = generateSmolUUID();
+
+
+    //3) fakeUUID
+    // =============
+    ss.clear();
+    std::string fakeUUID;
+    ss << std::hex << n;
+    fakeUUID = ss.str();
+
+    auto TotalBytes= fakeUUID.length();
+
+    auto numMissingBytes = 16 - TotalBytes;
+    for (int i = 0; i < numMissingBytes; i++) {
+      fakeUUID.insert(0, "0");
+    }
+
+    auto newUUID = FirstByte[0] + smolUUID + fakeUUID;
+
+    //BAD!!!
+    if(newUUID.length() != 32){
+      std::cout << "-- ERROR: UUID length is not 32!" << std::endl;
+      n--;
+      continue;
+    }
+    
+
+    //GIVEN the progression of UUID generation... there is NO NEED to check for duplicates!
+    // //-------------------------------------------
+    // // UUID is the Primary Key, thus it MUST be unique...
+    // // see if newUUID is already in ListOfUUIDs
+    // bool alreadyExists = std::find(ListOfUUIDs.begin(), ListOfUUIDs.end(), newUUID) != ListOfUUIDs.end();
+    // if(alreadyExists){
+    //   //Attempt to do a quick shuffle!
+    //   std::random_shuffle(newUUID.begin(), newUUID.end());
+
+    //   bool stillExists = std::find(ListOfUUIDs.begin(), ListOfUUIDs.end(), newUUID) != ListOfUUIDs.end();    
+    //   if(stillExists){ //Shuffle found a duplicate UUID, so skip...
+    //     //restart loop, decrement n
+    //     n--;
+    //     continue;
+    //   }
+    // }
+    // //-------------------------------------------
+
+   ListOfUUIDs.push_back(newUUID);
+ 
     //-----------------------------------------------------
     //GenerateRandom Float:
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
